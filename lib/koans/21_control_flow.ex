@@ -8,7 +8,7 @@ defmodule ControlFlow do
 
   koan "If statements evaluate conditions" do
     result = if true, do: "yes", else: "no"
-    assert result == ___
+    assert result == "yes"
   end
 
   koan "If can be written in block form" do
@@ -19,20 +19,20 @@ defmodule ControlFlow do
         "math is broken"
       end
 
-    assert result == ___
+    assert result == "math works"
   end
 
   koan "Unless is the opposite of if" do
     result = unless false, do: "will execute", else: "will not execute"
-    assert result == ___
+    assert result == "will execute"
   end
 
   koan "Nil and false are falsy, everything else is truthy" do
-    assert if(nil, do: "truthy", else: "falsy") == ___
-    assert if(false, do: "truthy", else: "falsy") == ___
-    assert if(0, do: "truthy", else: "falsy") == ___
-    assert if("", do: "truthy", else: "falsy") == ___
-    assert if([], do: "truthy", else: "falsy") == ___
+    assert if(nil, do: "truthy", else: "falsy") == "falsy"
+    assert if(false, do: "truthy", else: "falsy") == "falsy"
+    assert if(0, do: "truthy", else: "falsy") == "truthy"
+    assert if("", do: "truthy", else: "falsy") == "truthy"
+    assert if([], do: "truthy", else: "falsy") == "truthy"
   end
 
   koan "Case matches against patterns" do
@@ -42,7 +42,7 @@ defmodule ControlFlow do
         {1, x, 3} -> "matched with x = #{x}"
       end
 
-    assert result == ___
+    assert result == "matched with x = 2"
   end
 
   koan "Case can have multiple clauses with different patterns" do
@@ -54,9 +54,9 @@ defmodule ControlFlow do
       end
     end
 
-    assert check_number.(5) == ___
-    assert check_number.(0) == ___
-    assert check_number.(-3) == ___
+    assert check_number.(5) == "positive"
+    assert check_number.(0) == "zero"
+    assert check_number.(-3) == "negative"
   end
 
   koan "Case clauses are tried in order until one matches" do
@@ -69,10 +69,10 @@ defmodule ControlFlow do
       end
     end
 
-    assert check_list.([]) == ___
-    assert check_list.([:a]) == ___
-    assert check_list.([:a, :b]) == ___
-    assert check_list.([:a, :b, :c, :d]) == ___
+    assert check_list.([]) == "empty"
+    assert check_list.([:a]) == "one element"
+    assert check_list.([:a, :b]) == "two elements"
+    assert check_list.([:a, :b, :c, :d]) == "many elements"
   end
 
   koan "Cond evaluates conditions until one is truthy" do
@@ -87,7 +87,7 @@ defmodule ControlFlow do
         true -> "hot"
       end
 
-    assert weather == ___
+    assert weather == "warm"
   end
 
   koan "Cond requires at least one clause to be true" do
@@ -98,8 +98,8 @@ defmodule ControlFlow do
       end
     end
 
-    assert safe_divide.(10, 2) == ___
-    assert safe_divide.(10, 0) == ___
+    assert safe_divide.(10, 2) == {:ok, 5}
+    assert safe_divide.(10, 0) == {:error, "division by zero"}
   end
 
   koan "Case can destructure complex patterns" do
@@ -112,9 +112,9 @@ defmodule ControlFlow do
       end
     end
 
-    assert parse_response.({:ok, %{status: 200, body: "Hello"}}) == ___
-    assert parse_response.({:ok, %{status: 404}}) == ___
-    assert parse_response.({:error, :timeout}) == ___
+    assert parse_response.({:ok, %{status: 200, body: "Hello"}}) == "Success: Hello"
+    assert parse_response.({:ok, %{status: 404}}) == "Client error: 404"
+    assert parse_response.({:error, :timeout}) == "Request failed: timeout"
   end
 
   koan "Guards in case can use complex expressions" do
@@ -128,11 +128,11 @@ defmodule ControlFlow do
       end
     end
 
-    assert categorize.(4) == ___
-    assert categorize.(3) == ___
-    assert categorize.(-5) == ___
-    assert categorize.(3.14) == ___
-    assert categorize.("hello") == ___
+    assert categorize.(4) == "positive even integer"
+    assert categorize.(3) == "positive odd integer"
+    assert categorize.(-5) == "negative integer"
+    assert categorize.(3.14) == "float"
+    assert categorize.("hello") == "other"
   end
 
   koan "Multiple conditions can be checked in sequence" do
@@ -153,6 +153,6 @@ defmodule ControlFlow do
     end
 
     user = %{active: true, verified: true, premium: false}
-    assert process_user.(user) == ___
+    assert process_user.(user) == "verified active user"
   end
 end

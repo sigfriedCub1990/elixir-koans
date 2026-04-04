@@ -12,8 +12,8 @@ defmodule ErrorHandling do
       end
     end
 
-    assert parse_number.("123") == ___
-    assert parse_number.("abc") == ___
+    assert parse_number.("123") == {:ok, 123}
+    assert parse_number.("abc") == {:error, :invalid_format}
   end
 
   koan "Pattern matching makes error handling elegant" do
@@ -30,7 +30,7 @@ defmodule ErrorHandling do
         {:error, reason} -> "Error: #{reason}"
       end
 
-    assert result == ___
+    assert result == "Result: 5.0"
   end
 
   koan "Try-rescue catches runtime exceptions" do
@@ -41,7 +41,7 @@ defmodule ErrorHandling do
         ArithmeticError -> "Cannot divide by zero!"
       end
 
-    assert result == ___
+    assert result == "Cannot divide by zero!"
   end
 
   koan "Try-rescue can catch specific exception types" do
@@ -54,9 +54,9 @@ defmodule ErrorHandling do
       end
     end
 
-    assert safe_list_access.([1, 2, 3], 1) == ___
-    assert safe_list_access.([1, 2, 3], "a") == ___
-    assert safe_list_access.("abc", 0) == ___
+    assert safe_list_access.([1, 2, 3], 1) == {:ok, 2}
+    assert safe_list_access.([1, 2, 3], "a") == {:error, :invalid_argument}
+    assert safe_list_access.("abc", 0) == {:error, "abc is not a list"}
   end
 
   koan "Multiple rescue clauses handle different exceptions" do
@@ -75,10 +75,10 @@ defmodule ErrorHandling do
       end
     end
 
-    assert risky_operation.("divide") == ___
-    assert risky_operation.("access") == ___
-    assert risky_operation.("convert") == ___
-    assert risky_operation.("safe") == ___
+    assert risky_operation.("divide") == {:error, :arithmetic}
+    assert risky_operation.("access") == {:error, :missing_key}
+    assert risky_operation.("convert") == {:error, :invalid_argument}
+    assert risky_operation.("safe") == {:ok, "success"}
   end
 
   koan "Try-catch handles thrown values" do
@@ -90,7 +90,7 @@ defmodule ErrorHandling do
         :early_return -> "caught thrown value"
       end
 
-    assert result == ___
+    assert result == "caught thrown value"
   end
 
   koan "After clause always executes for cleanup" do
@@ -103,7 +103,7 @@ defmodule ErrorHandling do
         IO.puts("Executed but not returned")
       end
 
-    assert cleanup_called == ___
+    assert cleanup_called == :returned_value
   end
 
   koan "After executes even when there's no error" do
@@ -114,8 +114,8 @@ defmodule ErrorHandling do
         IO.puts("Executed but not returned")
       end
 
-    assert result == ___
-    assert value == ___
+    assert result == :success
+    assert value == "it worked"
   end
 
   defmodule CustomError do
@@ -130,7 +130,7 @@ defmodule ErrorHandling do
         e in CustomError -> "caught custom error: #{e.message}"
       end
 
-    assert result == ___
+    assert result == "caught custom error: custom failure"
   end
 
   koan "Bang functions raise exceptions on failure" do
@@ -141,7 +141,7 @@ defmodule ErrorHandling do
         KeyError -> "key not found"
       end
 
-    assert result == ___
+    assert result == "key not found"
   end
 
   koan "Exit signals can be caught and handled" do
@@ -152,7 +152,7 @@ defmodule ErrorHandling do
         :exit, :normal -> "caught normal exit"
       end
 
-    assert result == ___
+    assert result == "caught normal exit"
   end
 
   koan "Multiple clauses can handle different error patterns" do
@@ -172,10 +172,10 @@ defmodule ErrorHandling do
       end
     end
 
-    assert handle_database_operation.(:connection_error) == ___
-    assert handle_database_operation.(:timeout) == ___
-    assert handle_database_operation.(:invalid_query) == ___
-    assert handle_database_operation.(:success) == ___
+    assert handle_database_operation.(:connection_error) == {:error, {:exception, "connection failed"}}
+    assert handle_database_operation.(:timeout) == {:error, :timeout}
+    assert handle_database_operation.(:invalid_query) == {:error, :invalid_query}
+    assert handle_database_operation.(:success) == {:ok, "data retrieved"}
   end
 
   koan "Error information can be preserved and enriched" do
@@ -195,7 +195,7 @@ defmodule ErrorHandling do
     end
 
     {:error, error_info} = enriched_error.()
-    assert error_info.type == ___
-    assert error_info.context == ___
+    assert error_info.type == :conversion_error
+    assert error_info.context == "user input processing"
   end
 end

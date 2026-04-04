@@ -14,8 +14,8 @@ defmodule WithStatement do
       end
     end
 
-    assert parse_and_add.("5", "4") == ___
-    assert parse_and_add.("abc", "1") == ___
+    assert parse_and_add.("5", "4") == {:ok, 9}
+    assert parse_and_add.("abc", "1") == {:error, :invalid_number}
   end
 
   koan "With short-circuits on the first non-matching pattern" do
@@ -30,9 +30,9 @@ defmodule WithStatement do
       end
     end
 
-    assert process_user.(%{name: "Alice", age: 25}) == ___
-    assert process_user.(%{name: "Bob", age: 16}) == ___
-    assert process_user.(%{age: 25}) == ___
+    assert process_user.(%{name: "Alice", age: 25}) == {:ok, "Adult user: Alice"}
+    assert process_user.(%{name: "Bob", age: 16}) == {:error, :underage}
+    assert process_user.(%{age: 25}) == {:error, :missing_data}
   end
 
   defp safe_divide(_, 0), do: {:error, :division_by_zero}
@@ -52,9 +52,9 @@ defmodule WithStatement do
       end
     end
 
-    assert divide_and_sqrt.(16, 4) == ___
-    assert divide_and_sqrt.(10, 0) == ___
-    assert divide_and_sqrt.(-16, 4) == ___
+    assert divide_and_sqrt.(16, 4) == {:ok, 2}
+    assert divide_and_sqrt.(10, 0) == {:error, "Cannot divide by zero"}
+    assert divide_and_sqrt.(-16, 4) == {:error, "Cannot take square root of negative number"}
   end
 
   koan "With works great for nested data extraction" do
@@ -86,9 +86,9 @@ defmodule WithStatement do
       }
     }
 
-    assert get_user_email.(valid_data) == ___
-    assert get_user_email.(invalid_email_data) == ___
-    assert get_user_email.(%{}) == ___
+    assert get_user_email.(valid_data) == {:ok, "user@example.com"}
+    assert get_user_email.(invalid_email_data) == {:error, :invalid_email}
+    assert get_user_email.(%{}) == {:error, :missing_data}
   end
 
   koan "With can combine pattern matching with guards" do
@@ -104,10 +104,10 @@ defmodule WithStatement do
       end
     end
 
-    assert process_number.("5") == ___
-    assert process_number.("-5") == ___
-    assert process_number.("150") == ___
-    assert process_number.("abc") == ___
+    assert process_number.("5") == {:ok, 50}
+    assert process_number.("-5") == {:error, :not_positive}
+    assert process_number.("150") == {:error, :result_too_large}
+    assert process_number.("abc") == {:error, :not_a_number}
   end
 
   koan "With clauses can have side effects and assignments" do
@@ -123,7 +123,7 @@ defmodule WithStatement do
     end
 
     user_data = %{email: "test@example.com", password: "secure123"}
-    assert ___ = register_user.(user_data)
+    assert {:ok, %{id: 1, email: "test@example.com", password: "hashed_secure123"}} = register_user.(user_data)
   end
 
   defp validate_email(email) when is_binary(email) and byte_size(email) > 0 do
@@ -152,9 +152,9 @@ defmodule WithStatement do
       end
     end
 
-    assert simple_calculation.(5, 3) == ___
+    assert simple_calculation.(5, 3) == 8
     # When pattern doesn't match and no else, returns the non-matching value
-    assert simple_calculation.("5", 3) == ___
+    assert simple_calculation.("5", 3) == "5"
   end
 
   koan "With can handle complex nested error scenarios" do
@@ -171,9 +171,9 @@ defmodule WithStatement do
       end
     end
 
-    assert complex_workflow.("valid") == ___
-    assert complex_workflow.("step1_fail") == ___
-    assert complex_workflow.("step2_fail") == ___
+    assert complex_workflow.("valid") == {:ok, "step3_step2_step1_valid"}
+    assert complex_workflow.("step1_fail") == {:error, "Failed at step 1: invalid input"}
+    assert complex_workflow.("step2_fail") == {:error, "Failed at step 2: processing error"}
   end
 
   defp step_one("step1_fail"), do: {:error, :step1_failed}

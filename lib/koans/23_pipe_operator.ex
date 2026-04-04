@@ -13,7 +13,7 @@ defmodule PipeOperator do
       |> String.split(" ")
       |> Enum.join("-")
 
-    assert result == ___
+    assert result == "HELLO-WORLD"
   end
 
   koan "Without pipes, nested function calls can be hard to read" do
@@ -21,7 +21,7 @@ defmodule PipeOperator do
     piped_result = "Hello World" |> String.downcase() |> String.split(" ") |> Enum.join("_")
 
     assert nested_result == piped_result
-    assert piped_result == ___
+    assert piped_result == "hello_world"
   end
 
   koan "Pipes pass the result as the first argument to the next function" do
@@ -30,7 +30,7 @@ defmodule PipeOperator do
       |> Enum.filter(&(&1 > 2))
       |> Enum.map(&(&1 * 2))
 
-    assert result == ___
+    assert result == [6, 8, 10]
   end
 
   koan "Additional arguments can be passed to piped functions" do
@@ -39,7 +39,7 @@ defmodule PipeOperator do
       |> String.split(" ")
       |> Enum.join(", ")
 
-    assert result == ___
+    assert result == "hello, world"
   end
 
   koan "Pipes work with anonymous functions too" do
@@ -51,7 +51,7 @@ defmodule PipeOperator do
       |> double.()
       |> add_ten.()
 
-    assert result == ___
+    assert result == 20
   end
 
   koan "You can pipe into function captures" do
@@ -60,7 +60,7 @@ defmodule PipeOperator do
       |> Enum.map(&Integer.to_string/1)
       |> Enum.join("-")
 
-    assert result == ___
+    assert result == "1-2-3"
   end
 
   koan "Complex data transformations become readable with pipes" do
@@ -76,7 +76,7 @@ defmodule PipeOperator do
       |> Enum.map(& &1.name)
       |> Enum.sort()
 
-    assert active_names == ___
+    assert active_names == ["Alice", "Charlie"]
   end
 
   koan "Pipes can be split across multiple lines for readability" do
@@ -87,7 +87,7 @@ defmodule PipeOperator do
       |> Enum.map(&String.upcase/1)
       |> Enum.take(3)
 
-    assert result == ___
+    assert result == ["QUICK", "BROWN", "JUMPS"]
   end
 
   koan "The then/2 function is useful when you need to call a function that doesn't take the piped value as first argument" do
@@ -96,7 +96,7 @@ defmodule PipeOperator do
       |> Enum.map(&(&1 * 2))
       |> then(&Enum.zip([:a, :b, :c], &1))
 
-    assert result == ___
+    assert result == [{:a, 2}, {:b, 4}, {:c, 6}]
   end
 
   koan "Pipes can be used with case statements" do
@@ -109,8 +109,8 @@ defmodule PipeOperator do
       end
     end
 
-    assert process_number.("42") == ___
-    assert process_number.("abc") == ___
+    assert process_number.("42") == {:ok, 84}
+    assert process_number.("abc") == {:error, :invalid_number}
   end
 
   koan "Conditional pipes can use if/unless" do
@@ -121,8 +121,8 @@ defmodule PipeOperator do
       |> String.split(" ")
     end
 
-    assert process_string.("  hello world  ", true) == ___
-    assert process_string.("  hello world  ", false) == ___
+    assert process_string.("  hello world  ", true) == ["HELLO", "WORLD"]
+    assert process_string.("  hello world  ", false) == ["hello", "world"]
   end
 
   koan "Pipes work great with Enum functions for data processing" do
@@ -139,7 +139,7 @@ defmodule PipeOperator do
       |> Enum.map(& &1.amount)
       |> Enum.sum()
 
-    assert widget_total == ___
+    assert widget_total == 250
   end
 
   koan "Tap lets you perform side effects without changing the pipeline" do
@@ -149,7 +149,7 @@ defmodule PipeOperator do
       |> tap(&IO.inspect(&1, label: "After doubling"))
       |> Enum.sum()
 
-    assert result == ___
+    assert result == 12
   end
 
   koan "Multiple transformations can be chained elegantly" do
@@ -163,9 +163,9 @@ defmodule PipeOperator do
       |> Enum.map(fn {letter, words} -> {letter, length(words)} end)
       |> Enum.into(%{})
 
-    assert word_stats["d"] == ___
-    assert word_stats["t"] == ___
-    assert word_stats["q"] == ___
+    assert word_stats["d"] == 2
+    assert word_stats["t"] == 2
+    assert word_stats["q"] == 1
   end
 
   koan "Pipes can be used in function definitions for clean APIs" do
@@ -181,7 +181,7 @@ defmodule PipeOperator do
       end
     end
 
-    assert TextProcessor.clean_and_count("  Hello, World! How are you?  ") == ___
+    assert TextProcessor.clean_and_count("  Hello, World! How are you?  ") == 5
   end
 
   koan "Error handling can be integrated into pipelines" do
@@ -199,7 +199,7 @@ defmodule PipeOperator do
       end
     end
 
-    assert pipeline.(10, 2) == ___
-    assert pipeline.(10, 0) == ___
+    assert pipeline.(10, 2) == "Result: 5.0"
+    assert pipeline.(10, 0) == "Error: division_by_zero"
   end
 end
